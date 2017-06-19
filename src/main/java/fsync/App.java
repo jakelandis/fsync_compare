@@ -27,6 +27,8 @@ public class App {
     while (bytes < ONE_GB) {
       io.write(buffer);
       buffer.rewind();
+
+      count++;
       bytes += logEntry.length;
 
       if (count == SYNC_INTERVAL) {
