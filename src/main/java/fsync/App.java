@@ -16,28 +16,45 @@ public class App {
   public final static int SYNC_INTERVAL = 1024;
 
   public static void main(String... args) throws IOException {
+
+    if (args.length != 2) {
+      System.out.println("Usage: app [test] [writesize]");
+      System.out.println("Test can be 'channel' or 'mmap'");
+      System.out.println("writesize is how many bytes you'd like each write to be");
+      return;
+    }
+
     final IO io = getIO(args[0]);
     System.out.printf("Running %s test\n", args[0]);
 
-    final ByteBuffer buffer = ByteBuffer.wrap(logEntry);
+    int writeSize = Integer.parseInt(args[1]);
+    final ByteBuffer buffer = ByteBuffer.allocateDirect(writeSize);
+
+    int eventCount = writeSize / logEntry.length;
+    for (int i = 0; i < (writeSize / logEntry.length); i++) {
+      buffer.put(logEntry);
+    }
     buffer.rewind();
+    System.out.printf("Buffer contains %d events and has byte size is %d\n", eventCount, buffer.limit());
 
     long bytes = 0;
+    int interval = 0;
     int count = 0;
     while (bytes < ONE_GB) {
       io.write(buffer);
       buffer.rewind();
 
       count++;
-      bytes += logEntry.length;
+      interval += eventCount; // fsync every N events.
+      bytes += buffer.limit();
 
-      if (count == SYNC_INTERVAL) {
+      if (interval >= SYNC_INTERVAL) {
         io.sync();
-        count = 0;
+        interval = 0;
       }
     }
 
-    System.out.printf("Wrote %d bytes total\n", bytes);
+    System.out.printf("Did %d writes. Wrote %d bytes total\n", count, bytes);
   }
 
   public static IO getIO(String name) throws IOException {
