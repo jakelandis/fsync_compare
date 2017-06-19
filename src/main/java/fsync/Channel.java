@@ -20,7 +20,8 @@ public class Channel {
         System.out.println("Creating a 1GB tempfile : " + file.getAbsolutePath());
         file.deleteOnExit();
         FileChannel fileChannel = FileChannel.open(file.toPath(), StandardOpenOption.APPEND);
-        ByteBuffer byteBuffer = ByteBuffer.wrap(logEntry);
+        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(logEntry.length);
+        byteBuffer.put(logEntry);
 
         long allTime = 0;
         long fsycTotalTime = 0;
