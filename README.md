@@ -17,5 +17,13 @@ java -Xmx1024m -Djava.io.tmpdir=/storage -jar fsync_compare-0.1-SNAPSHOT.jar
 ```
 The code uses Java's temp directory...but if that is a mapped to a temporary filesystem, then the results will be skewed badly.
 
+You can also pass in either ```channel``` or  ```mmap``` as an argument to just run one or the other, and get timings for the single run.
+
+For example:
+```
+/usr/bin/time -v java -Djava.io.tmpdir=/apps -jar fsync_compare-0.1-SNAPSHOT.jar mmap
+```
+
+
 
 
