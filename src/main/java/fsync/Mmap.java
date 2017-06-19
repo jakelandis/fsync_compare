@@ -28,7 +28,7 @@ public class Mmap {
         mappedByteBuffer.load();
 
         ByteBuffer preByteBuffer = ByteBuffer.allocateDirect(logEntry.length);
-        preByteBuffer.wrap(logEntry);
+        preByteBuffer.put(logEntry);
 
         long allTime = 0;
         long fsycTotalTime = 0;
