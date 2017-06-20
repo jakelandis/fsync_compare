@@ -39,11 +39,8 @@ class Runner {
       for (int i = 0; i < eventCount; i++) {
         buffer.put(logEntry);
       }
-      note("buffer r %s\n", buffer);
-      buffer.rewind();
 
-      // Set buffer's end to be the end of the last log entry
-      buffer.limit(eventCount * logEntry.length);
+      buffer.flip();
 
       note("buffer contains %d events and has byte size is %d\n", eventCount, buffer.limit());
       note("buffer %s\n", buffer);
