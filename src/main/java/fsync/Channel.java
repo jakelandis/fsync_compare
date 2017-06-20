@@ -7,11 +7,12 @@ import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.file.StandardOpenOption;
 
-public class Channel implements App.IO {
+public class Channel implements IO {
   private FileChannel channel;
+  private RandomAccessFile raf;
 
   public Channel(File file) throws IOException {
-    RandomAccessFile raf = new RandomAccessFile(file, "rw");
+    raf = new RandomAccessFile(file, "rw");
     channel = raf.getChannel();
   }
 
@@ -21,5 +22,10 @@ public class Channel implements App.IO {
 
   public void sync() throws IOException {
     channel.force(false);
+  }
+
+  public void close() throws Exception {
+    raf.close();
+    channel.close();
   }
 }

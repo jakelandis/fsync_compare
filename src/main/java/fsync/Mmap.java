@@ -7,15 +7,15 @@ import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 
-public class Mmap implements App.IO {
+public class Mmap implements IO {
   private MappedByteBuffer map;
+  private RandomAccessFile raf;
+  private FileChannel channel;
 
   public Mmap(File file, long size) throws IOException { 
-    RandomAccessFile raf = new RandomAccessFile(file, "rw");
-    raf.setLength(size);
-    FileChannel fileChannel = raf.getChannel();
-    map = fileChannel.map(FileChannel.MapMode.READ_WRITE, 0, (int)size);
-    raf.close();
+    raf = new RandomAccessFile(file, "rw");
+    channel = raf.getChannel();
+    map = channel.map(FileChannel.MapMode.READ_WRITE, 0, (int)size);
   }
 
   public void write(ByteBuffer buffer) throws IOException {
@@ -24,5 +24,10 @@ public class Mmap implements App.IO {
 
   public void sync() throws IOException {
     map.force();
+  }
+
+  public void close() throws Exception {
+    raf.close();
+    channel.close();
   }
 }
