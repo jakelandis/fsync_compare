@@ -36,22 +36,30 @@ class Runner {
       final ByteBuffer buffer = ByteBuffer.allocateDirect(writeSize);
 
       int eventCount = writeSize / logEntry.length;
-      for (int i = 0; i < (writeSize / logEntry.length); i++) {
+      for (int i = 0; i < eventCount; i++) {
         buffer.put(logEntry);
       }
+      note("buffer r %s\n", buffer);
       buffer.rewind();
+
+      // Set buffer's end to be the end of the last log entry
+      buffer.limit(eventCount * logEntry.length);
+
       note("buffer contains %d events and has byte size is %d\n", eventCount, buffer.limit());
+      note("buffer %s\n", buffer);
 
       long bytes = 0;
       int interval = 0;
       int count = 0;
-      while (bytes < ONE_GB) {
+      long end = ONE_GB - buffer.remaining();
+      while (bytes < end) {
+        bytes += buffer.remaining();
+
         io.write(buffer);
         buffer.rewind();
 
         count++;
         interval += eventCount; // fsync every n events.
-        bytes += buffer.limit();
 
         if (interval >= syncInterval) {
           io.sync();
