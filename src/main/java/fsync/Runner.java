@@ -10,15 +10,16 @@ import java.nio.charset.StandardCharsets;
 class Runner {
   static final byte[] logEntry = "[Fri Sep 09 10:42:29.902022 2011] [core:error] [pid 35708:tid 4328636416] [client 72.15.99.187] File does not exist: /usr/local/apache2/htdocs/favicon.ico".getBytes(StandardCharsets.UTF_8);
   public final static long ONE_GB = 1024 * 1024 * 1024;
-  public final static int SYNC_INTERVAL = 1024;
 
   private boolean noted;
   private String name;
   private int writeSize;
+  private int syncInterval;
 
-  public Runner(String name, int writeSize) {
+  public Runner(String name, int writeSize, int syncInterval) {
     this.name = name;
     this.writeSize = writeSize;
+    this.syncInterval = syncInterval;
   }
 
   private void note(String format, Object... args) {
@@ -31,7 +32,7 @@ class Runner {
 
   public void run() throws Exception {
     try (final IO io = getIO(name)) {
-      note("Running %s test\n", name);
+      note("Running %s test (write size: %d, sync interval: %d)\n", name, writeSize, syncInterval);
       final ByteBuffer buffer = ByteBuffer.allocateDirect(writeSize);
 
       int eventCount = writeSize / logEntry.length;
@@ -52,7 +53,7 @@ class Runner {
         interval += eventCount; // fsync every n events.
         bytes += buffer.limit();
 
-        if (interval >= SYNC_INTERVAL) {
+        if (interval >= syncInterval) {
           io.sync();
           interval = 0;
         }
