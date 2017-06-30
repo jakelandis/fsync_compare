@@ -28,7 +28,7 @@ public class Channel {
 
         int i = 0;
         long bytesWritten = 0;
-        while (bytesWritten < App.ONE_GB- bytesWritten) {
+        while (bytesWritten < App.ONE_GB- logEntry.length) {
             long astart = System.nanoTime();
             fileChannel.write(byteBuffer);
             byteBuffer.rewind();
