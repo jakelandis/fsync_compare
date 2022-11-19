@@ -7,6 +7,7 @@ import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 public class Mmap {
     private static final byte[] logEntry = "[Fri Sep 09 10:42:29.902022 2011] [core:error] [pid 35708:tid 4328636416] [client 72.15.99.187] File does not exist: /usr/local/apache2/htdocs/favicon.ico".getBytes(StandardCharsets.UTF_8);
@@ -16,7 +17,7 @@ public class Mmap {
         System.out.println("MMap Test");
         System.out.println("==============");
 
-        File file = File.createTempFile("mmap", ".tmp");
+        File file = Files.createTempFile("mmap", ".tmp").toFile();
         System.out.println("Creating a 1GB tempfile : " + file.getAbsolutePath());
         file.deleteOnExit();
         RandomAccessFile raf = new RandomAccessFile(file, "rw");
