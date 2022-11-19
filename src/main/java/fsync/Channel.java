@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 
 public class Channel {
@@ -16,7 +17,7 @@ public class Channel {
         System.out.println("Channel Test");
         System.out.println("==============");
 
-        File file = File.createTempFile("channel", ".tmp");
+        File file = Files.createTempFile("channel", ".tmp").toFile();
         System.out.println("Creating a 1GB tempfile : " + file.getAbsolutePath());
         file.deleteOnExit();
         FileChannel fileChannel = FileChannel.open(file.toPath(), StandardOpenOption.APPEND);
